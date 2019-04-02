@@ -12,10 +12,18 @@ app.get('/user', (req, res) => {
 })
 
 app.post('/user', (req, res) => {
-  let person = req.body
-  res.json({
-    person
-  })
+  let user = req.body
+
+  if (!user.name) {
+    res.status(400).json({
+      ok: false,
+      message: 'Name is required'
+    })
+  } else {
+    res.json({
+      user
+    })
+  }
 })
 
 app.put('/user/:id', (req, res) => {
