@@ -1,0 +1,19 @@
+{
+  "name": "restserver",
+  "version": "0.0.1",
+  "description": "Create a REST server with Nodejs.",
+  "main": "server",
+  "repository": "git@github.com:tonykevin/restserver.git",
+  "author": "tonykevin <h@tonykevin.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
