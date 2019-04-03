@@ -17,6 +17,7 @@
     "bcrypt": "^3.0.5",
     "express": "^4.16.4",
     "mongoose": "^5.4.21",
-    "mongoose-unique-validator": "^2.0.2"
+    "mongoose-unique-validator": "^2.0.2",
+    "underscore": "^1.9.1"
   }
 }
