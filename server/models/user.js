@@ -1,6 +1,11 @@
 const { model, Schema } = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+const allowedRoles = {
+  values: ['ADMIN_ROLE', 'USER_ROLE'],
+  message: '{VALUE} is not a allowed role'
+}
+
 const userSchema = new Schema({
   name: {
     type: String,
@@ -21,6 +26,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
+    enum: allowedRoles,
     default: 'USER_ROLE'
   },
   state: {
