@@ -2,6 +2,7 @@ require('./config')
 
 const bodyParser = require('body-parser')
 const express = require('express')
+const mongoose = require('mongoose')
 
 const app = express()
 
@@ -37,6 +38,14 @@ app.put('/user/:id', (req, res) => {
 
 app.delete('/user', (req, res) => {
   res.json('delete  user')
+})
+
+mongoose.connect(process.env.URL_DB, { useNewUrlParser: true }, (err, res) => {
+  if (err) {
+    throw new Error(err)
+  } else {
+    console.log('Online database')
+  }
 })
 
 app.listen(
