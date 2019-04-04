@@ -6,7 +6,27 @@ const { User } = require('../models')
 const app = express()
 
 app.get('/user', (req, res) => {
-  res.json('get user')
+  let { limit, since } = req.query
+
+  since = Number(since) || 0
+  limit = Number(limit) || 5
+
+  User.find({})
+    .skip(since)
+    .limit(limit)
+    .exec((err, users) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err
+        })
+      }
+
+      res.json({
+        ok: true,
+        users
+      })
+    })
 })
 
 app.post('/user', (req, res) => {
