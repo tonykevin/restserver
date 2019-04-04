@@ -22,9 +22,12 @@ app.get('/user', (req, res) => {
         })
       }
 
-      res.json({
-        ok: true,
-        users
+      User.countDocuments({}, (err, size) => {
+        res.json({
+          ok: true,
+          users,
+          size
+        })
       })
     })
 })
