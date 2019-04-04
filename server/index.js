@@ -11,13 +11,20 @@ app.use(bodyParser.json())
 
 app.use(require('./routes/user'))
 
-mongoose.connect(process.env.URL_DB, { useNewUrlParser: true }, (err, res) => {
-  if (err) {
-    throw new Error(err)
-  } else {
-    console.log('Online database')
+mongoose.connect(
+  process.env.URL_DB,
+  {
+    useCreateIndex: true,
+    useNewUrlParser: true
+  },
+  (err) => {
+    if (err) {
+      throw new Error(err)
+    } else {
+      console.log('Online database')
+    }
   }
-})
+)
 
 app.listen(
   process.env.PORT,
