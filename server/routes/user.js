@@ -11,7 +11,7 @@ app.get('/user', (req, res) => {
   since = Number(since) || 0
   limit = Number(limit) || 5
 
-  User.find({}, 'name email role state google img')
+  User.find({ state: true }, 'name email role state google img')
     .skip(since)
     .limit(limit)
     .exec((err, users) => {
@@ -22,7 +22,7 @@ app.get('/user', (req, res) => {
         })
       }
 
-      User.countDocuments({}, (err, size) => {
+      User.countDocuments({ state: true }, (err, size) => {
         res.json({
           ok: true,
           users,
