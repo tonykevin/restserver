@@ -11,7 +11,7 @@ app.get('/user', (req, res) => {
   since = Number(since) || 0
   limit = Number(limit) || 5
 
-  User.find({})
+  User.find({}, 'name email role state google img')
     .skip(since)
     .limit(limit)
     .exec((err, users) => {
