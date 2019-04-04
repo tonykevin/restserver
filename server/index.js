@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 app.use(require('./routes/user'))
 
 mongoose.connect(
-  process.env.URL_DB,
+  process.env.MONGO_URI,
   {
     useCreateIndex: true,
     useNewUrlParser: true
