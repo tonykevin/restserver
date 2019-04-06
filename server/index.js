@@ -9,7 +9,7 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.use(require('./routes/user'))
+app.use(require('./routes'))
 
 mongoose.connect(
   process.env.MONGO_URI,
