@@ -2,10 +2,11 @@ const express = require('express')
 const { hashSync } = require('bcrypt')
 const _ = require('underscore')
 const { User } = require('../models')
+const { authentication } = require('../middlewares')
 
 const app = express()
 
-app.get('/user', (req, res) => {
+app.get('/user', authentication, (req, res) => {
   let { limit, since } = req.query
 
   since = Number(since) || 0
@@ -23,6 +24,13 @@ app.get('/user', (req, res) => {
       }
 
       User.countDocuments({ state: true }, (err, size) => {
+        if (err) {
+          return res.status(500).json({
+            ok: false,
+            err
+          })
+        }
+
         res.json({
           ok: true,
           users,

@@ -1,6 +1,6 @@
 const express = require('express')
 const { compareSync } = require('bcrypt')
-const { sign }= require('jsonwebtoken')
+const { sign } = require('jsonwebtoken')
 const { User } = require('../models')
 
 const app = express()
