@@ -1,5 +1,6 @@
 const express = require('express')
 const { compareSync } = require('bcrypt')
+const { sign }= require('jsonwebtoken')
 const { User } = require('../models')
 
 const app = express()
@@ -33,10 +34,16 @@ app.post('/login', (req, res) => {
       })
     }
 
+    let token = sign(
+      { user: userDB },
+      process.env.SEED,
+      { expiresIn: process.env.TOKEN_EXPIRATION }
+    )
+
     res.json({
       ok: true,
       user: userDB,
-      token: '123'
+      token
     })
   })
 })
