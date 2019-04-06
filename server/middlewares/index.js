@@ -2,8 +2,10 @@
  * Middlewares
  */
 
-const authentication = require('./authentication')
+const verifyToken = require('./verifyToken')
+const verifyAdminRole = require('./verifyAdminRole')
 
 module.exports = {
-  authentication
+  verifyAdminRole,
+  verifyToken
 }

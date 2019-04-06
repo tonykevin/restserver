@@ -2,11 +2,11 @@ const express = require('express')
 const { hashSync } = require('bcrypt')
 const _ = require('underscore')
 const { User } = require('../models')
-const { authentication } = require('../middlewares')
+const { verifyAdminRole, verifyToken } = require('../middlewares')
 
 const app = express()
 
-app.get('/user', authentication, (req, res) => {
+app.get('/user', verifyToken, (req, res) => {
   let { limit, since } = req.query
 
   since = Number(since) || 0
@@ -40,7 +40,7 @@ app.get('/user', authentication, (req, res) => {
     })
 })
 
-app.post('/user', authentication, (req, res) => {
+app.post('/user', [verifyToken, verifyAdminRole], (req, res) => {
   let { email, name, password, role } = req.body
 
   let user = new User({
@@ -65,7 +65,7 @@ app.post('/user', authentication, (req, res) => {
   })
 })
 
-app.put('/user/:id', authentication, (req, res) => {
+app.put('/user/:id', [verifyToken, verifyAdminRole], (req, res) => {
   let { id } = req.params
   let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'state'])
 
@@ -89,7 +89,7 @@ app.put('/user/:id', authentication, (req, res) => {
   )
 })
 
-app.delete('/user/:id', authentication, (req, res) => {
+app.delete('/user/:id', [verifyToken, verifyAdminRole], (req, res) => {
   let { id } = req.params
 
   let changeState = { state: false }
