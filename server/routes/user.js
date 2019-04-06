@@ -40,7 +40,7 @@ app.get('/user', authentication, (req, res) => {
     })
 })
 
-app.post('/user', (req, res) => {
+app.post('/user', authentication, (req, res) => {
   let { email, name, password, role } = req.body
 
   let user = new User({
@@ -65,7 +65,7 @@ app.post('/user', (req, res) => {
   })
 })
 
-app.put('/user/:id', (req, res) => {
+app.put('/user/:id', authentication, (req, res) => {
   let { id } = req.params
   let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'state'])
 
@@ -89,7 +89,7 @@ app.put('/user/:id', (req, res) => {
   )
 })
 
-app.delete('/user/:id', (req, res) => {
+app.delete('/user/:id', authentication, (req, res) => {
   let { id } = req.params
 
   let changeState = { state: false }
