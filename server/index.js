@@ -3,12 +3,15 @@ require('./config')
 const bodyParser = require('body-parser')
 const express = require('express')
 const mongoose = require('mongoose')
+const { resolve } = require('path')
 
 const app = express()
+const publicPath = resolve(__dirname, '../public')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+app.use(express.static(publicPath))
 app.use(require('./routes'))
 
 mongoose.connect(
