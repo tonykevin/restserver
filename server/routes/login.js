@@ -57,20 +57,90 @@ async function verify (token) {
     audience: process.env.CLIENT_ID
   })
 
-  const payload = ticket.getPayload()
+  const { name, email, picture } = ticket.getPayload()
 
-  console.log(payload.name)
-  console.log(payload.email)
-  console.log(payload.picture)
+  return {
+    name,
+    email,
+    img: picture,
+    google: true
+  }
 }
 
-app.post('/google', (req, res) => {
-  let token = req.body.idtoken
+app.post('/google', async (req, res) => {
+  let token = req.body.idToken
 
-  verify(token)
+  if (!token) {
+    return res.status(400).json({
+      ok: false,
+      err: {
+        message: 'token not provided'
+      }
+    })
+  }
 
-  res.json({
-    token
+  let googleUser = await verify(token)
+    .catch(err => {
+      return res.status(403).json({
+        ok: false,
+        err
+      })
+    })
+
+  User.findOne({ email: googleUser.email }, (err, userDB) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+
+    if (userDB) {
+      if (!userDB.google) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'must use normal authentication'
+          }
+        })
+      } else {
+        let token = sign(
+          { user: userDB },
+          process.env.SEED,
+          { expiresIn: process.env.TOKEN_EXPIRATION }
+        )
+
+        return res.json({
+          ok: true,
+          user: userDB,
+          token
+        })
+      }
+    } else {
+      let user = new User({ ...googleUser })
+      user.password = ':)'
+
+      user.save((err, userDB) => {
+        if (err) {
+          return res.status(500).json({
+            ok: false,
+            err
+          })
+        }
+
+        let token = sign(
+          { user: userDB },
+          process.env.SEED,
+          { expiresIn: process.env.TOKEN_EXPIRATION }
+        )
+
+        return res.json({
+          ok: true,
+          user: userDB,
+          token
+        })
+      })
+    }
   })
 })
 
