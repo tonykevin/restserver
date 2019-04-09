@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('underscore')
 const { verifyToken } = require('../middlewares')
 const { Category } = require('../models')
 
@@ -72,6 +73,30 @@ app.post('/category', verifyToken, (req, res) => {
       category: categoryDB
     })
   })
+})
+
+// Update a category
+app.put('/category/:id', (req, res) => {
+  let { id } = req.params
+  let body = _.pick(req.body, ['name', 'user'])
+
+  Category.findOneAndUpdate(
+    id,
+    body,
+    { new: true, runValidators: true },
+    (err, categoryDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      res.json({
+        ok: true,
+        category: categoryDB
+      })
+    })
 })
 
 module.exports = app
