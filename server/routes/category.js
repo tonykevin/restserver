@@ -32,6 +32,26 @@ app.get('/category', verifyToken, (req, res) => {
     })
 })
 
+// Show a category with id
+app.get('/category/:id', (req, res) => {
+  let { id } = req.params
+
+  Category.findById(id)
+    .exec((err, category) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      res.json({
+        ok: true,
+        category
+      })
+    })
+})
+
 // Create a category
 app.post('/category', verifyToken, (req, res) => {
   let category = new Category({
