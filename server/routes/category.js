@@ -1,6 +1,6 @@
 const express = require('express')
 const _ = require('underscore')
-const { verifyToken } = require('../middlewares')
+const { verifyAdminRole, verifyToken } = require('../middlewares')
 const { Category } = require('../models')
 
 const app = express()
@@ -80,7 +80,7 @@ app.put('/category/:id', (req, res) => {
   let { id } = req.params
   let body = _.pick(req.body, ['name', 'user'])
 
-  Category.findOneAndUpdate(
+  Category.findByIdAndUpdate(
     id,
     body,
     { new: true, runValidators: true },
@@ -97,6 +97,34 @@ app.put('/category/:id', (req, res) => {
         category: categoryDB
       })
     })
+})
+
+// Delete a category
+app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
+  let { id } = req.params
+
+  Category.findByIdAndDelete(id, (err, deleteCategory) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+
+    if (!deleteCategory) {
+      return res.status(400).json({
+        ok: false,
+        err: {
+          message: 'category not found'
+        }
+      })
+    }
+
+    res.json({
+      ok: true,
+      category: deleteCategory
+    })
+  })
 })
 
 module.exports = app

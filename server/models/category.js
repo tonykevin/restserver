@@ -4,7 +4,6 @@ const uniqueValidator = require('mongoose-unique-validator')
 const categorySchema = new Schema({
   name: {
     type: String,
-    unique: true,
     require: [true, 'name is required']
   },
   user: {
