@@ -7,6 +7,7 @@ const app = express()
 // List categories
 app.get('/category', verifyToken, (req, res) => {
   Category.find({})
+    .populate('user', 'name email')
     .exec((err, categories) => {
       if (err) {
         return res.status(500).json({
