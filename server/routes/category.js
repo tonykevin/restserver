@@ -1,5 +1,4 @@
 const express = require('express')
-const _ = require('underscore')
 const { verifyAdminRole, verifyToken } = require('../middlewares')
 const { Category } = require('../models')
 
@@ -78,17 +77,26 @@ app.post('/category', verifyToken, (req, res) => {
 // Update a category
 app.put('/category/:id', (req, res) => {
   let { id } = req.params
-  let body = _.pick(req.body, ['description', 'user'])
+  let { description } = req.body
 
   Category.findByIdAndUpdate(
     id,
-    body,
-    { new: true, runValidators: true },
+    { description },
+    { new: true, runValidators: true, context: 'query' },
     (err, categoryDB) => {
       if (err) {
         return res.status(500).json({
           ok: false,
           err
+        })
+      }
+
+      if (!categoryDB) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'not exist the category'
+          }
         })
       }
 
