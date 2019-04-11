@@ -56,7 +56,7 @@ app.get('/category/:id', (req, res) => {
 // Create a category
 app.post('/category', verifyToken, (req, res) => {
   let category = new Category({
-    name: req.body.name,
+    description: req.body.description,
     user: req.user._id
   })
 
@@ -78,7 +78,7 @@ app.post('/category', verifyToken, (req, res) => {
 // Update a category
 app.put('/category/:id', (req, res) => {
   let { id } = req.params
-  let body = _.pick(req.body, ['name', 'user'])
+  let body = _.pick(req.body, ['description', 'user'])
 
   Category.findByIdAndUpdate(
     id,

@@ -2,10 +2,10 @@ const { model, Schema } = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const categorySchema = new Schema({
-  name: {
+  description: {
     type: String,
     unique: true,
-    required: [true, 'name is required']
+    required: [true, 'description is required']
   },
   user: {
     type: Schema.Types.ObjectId,
