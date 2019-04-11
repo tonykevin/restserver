@@ -33,11 +33,11 @@ app.get('/category', verifyToken, (req, res) => {
 })
 
 // Show a category with id
-app.get('/category/:id', (req, res) => {
+app.get('/category/:id', verifyToken, (req, res) => {
   let { id } = req.params
 
   Category.findById(id)
-    .exec((err, category) => {
+    .exec((err, categoryDB) => {
       if (err) {
         return res.status(500).json({
           ok: false,
@@ -45,9 +45,18 @@ app.get('/category/:id', (req, res) => {
         })
       }
 
+      if (!categoryDB) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'not exist the category'
+          }
+        })
+      }
+
       res.json({
         ok: true,
-        category
+        category: categoryDB
       })
     })
 })
