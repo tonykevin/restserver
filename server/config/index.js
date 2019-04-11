@@ -14,7 +14,7 @@ process.env.MONGO_URI = process.env.NODE_ENV === 'production'
  * minutes
  * hours
  * days */
-process.env.TOKEN_EXPIRATION = process.env.TOKEN_EXPIRATION || 60 * 60 * 24 * 30
+process.env.TOKEN_EXPIRATION = process.env.TOKEN_EXPIRATION || '48h'
 
 // AUTHENTICATION SEED
 process.env.SEED = process.env.SEED || 'seed-development'
