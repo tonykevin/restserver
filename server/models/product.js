@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const productSchema = new Schema({
   name: {
@@ -20,7 +21,7 @@ const productSchema = new Schema({
   category: {
     type: Schema.Types.ObjectId,
     ref: 'Category',
-    required: true
+    required: [true, 'category is required']
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -28,5 +29,7 @@ const productSchema = new Schema({
   }
 
 })
+
+productSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' })
 
 module.exports = model('Product', productSchema)
