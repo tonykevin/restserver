@@ -111,7 +111,7 @@ app.put('/category/:id', (req, res) => {
 app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
   let { id } = req.params
 
-  Category.findByIdAndDelete(id, (err, deleteCategory) => {
+  Category.findByIdAndDelete(id, (err, deletedCategory) => {
     if (err) {
       return res.status(500).json({
         ok: false,
@@ -119,7 +119,7 @@ app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
       })
     }
 
-    if (!deleteCategory) {
+    if (!deletedCategory) {
       return res.status(400).json({
         ok: false,
         err: {
@@ -130,7 +130,9 @@ app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
     res.json({
       ok: true,
-      category: deleteCategory
+      err: {
+        message: 'deleted category'
+      }
     })
   })
 })
