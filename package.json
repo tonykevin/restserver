@@ -1,6 +1,6 @@
 {
   "name": "restserver",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Create a REST server with Nodejs.",
   "main": "server",
   "repository": "git@github.com:tonykevin/restserver.git",
