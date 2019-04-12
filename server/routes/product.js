@@ -135,4 +135,39 @@ app.put('/products/:id', (req, res) => {
   )
 })
 
+/* Delete a product */
+app.delete('/products/:id', verifyToken, (req, res) => {
+  let { id } = req.params
+
+  let changeAvailable = { available: false }
+
+  Product.findByIdAndUpdate(
+    id,
+    changeAvailable,
+    { new: true },
+    (err, delProduct) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      if (!delProduct) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'not exist the product'
+          }
+        })
+      }
+
+      res.json({
+        ok: true,
+        product: delProduct
+      })
+    }
+  )
+})
+
 module.exports = app
