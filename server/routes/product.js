@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('underscore')
 const { verifyToken } = require('../middlewares')
 const { Product } = require('../models')
 
@@ -98,6 +99,40 @@ app.post('/products', verifyToken, (req, res) => {
       category: productDB
     })
   })
+})
+
+/* Update a product */
+app.put('/products/:id', (req, res) => {
+  let { id } = req.params
+  let body = _.pick(req.body, ['name', 'unitPrice', 'description', 'category'])
+
+  Product.findByIdAndUpdate(
+    id,
+    body,
+    { context: 'query', new: true, runValidatos: true },
+    (err, productDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      if (!productDB) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'not exist the product'
+          }
+        })
+      }
+
+      res.json({
+        ok: true,
+        product: productDB
+      })
+    }
+  )
 })
 
 module.exports = app
