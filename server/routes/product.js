@@ -8,11 +8,14 @@ const app = express()
 /* List products */
 app.get('/products', verifyToken, (req, res) => {
   let { limit, since } = req.query
+  const filter = {
+    available: true
+  }
 
   since = Number(since) || 0
   limit = Number(limit) || 5
 
-  Product.find({})
+  Product.find(filter)
     .sort('name')
     .skip(since)
     .limit(limit)
@@ -26,7 +29,7 @@ app.get('/products', verifyToken, (req, res) => {
         })
       }
 
-      Product.countDocuments({}, (err, size) => {
+      Product.countDocuments(filter, (err, size) => {
         if (err) {
           return res.status(500).json({
             ok: false,
