@@ -97,7 +97,7 @@ app.post('/products', verifyToken, (req, res) => {
       })
     }
 
-    res.json({
+    res.status(201).json({
       ok: true,
       category: productDB
     })
