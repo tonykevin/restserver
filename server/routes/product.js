@@ -42,7 +42,38 @@ app.get('/products', verifyToken, (req, res) => {
     })
 })
 
-/* Create a user */
+/* Show a product */
+app.get('/products/:id', verifyToken, (req, res) => {
+  let { id } = req.params
+
+  Product.findById(id, 'name unitPrice category')
+    .populate('category', 'description')
+    .populate('user', 'name email')
+    .exec((err, productDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      if (!productDB) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: 'not exist the product'
+          }
+        })
+      }
+
+      res.json({
+        ok: true,
+        category: productDB
+      })
+    })
+})
+
+/* Create a product */
 app.post('/products', verifyToken, (req, res) => {
   let { name, unitPrice, description, category } = req.body
 
