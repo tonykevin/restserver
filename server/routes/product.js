@@ -6,7 +6,7 @@ const { Product } = require('../models')
 const app = express()
 
 /* List products */
-app.get('/products', verifyToken, (req, res) => {
+app.get('/product', verifyToken, (req, res) => {
   let { limit, since } = req.query
   const filter = {
     available: true
@@ -47,7 +47,7 @@ app.get('/products', verifyToken, (req, res) => {
 })
 
 /* Show a product */
-app.get('/products/:id', verifyToken, (req, res) => {
+app.get('/product/:id', verifyToken, (req, res) => {
   let { id } = req.params
 
   Product.findById(id)
@@ -78,7 +78,7 @@ app.get('/products/:id', verifyToken, (req, res) => {
 })
 
 /* Create a product */
-app.post('/products', verifyToken, (req, res) => {
+app.post('/product', verifyToken, (req, res) => {
   let { name, unitPrice, description, category } = req.body
 
   let product = new Product({
@@ -105,7 +105,7 @@ app.post('/products', verifyToken, (req, res) => {
 })
 
 /* Update a product */
-app.put('/products/:id', (req, res) => {
+app.put('/product/:id', (req, res) => {
   let { id } = req.params
   let body = _.pick(req.body, ['name', 'unitPrice', 'description', 'category'])
 
@@ -139,7 +139,7 @@ app.put('/products/:id', (req, res) => {
 })
 
 /* Delete a product */
-app.delete('/products/:id', verifyToken, (req, res) => {
+app.delete('/product/:id', verifyToken, (req, res) => {
   let { id } = req.params
 
   let changeAvailable = { available: false }
