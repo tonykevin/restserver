@@ -4,7 +4,45 @@ const { Product } = require('../models')
 
 const app = express()
 
-// Create a user
+/* List products */
+app.get('/products', verifyToken, (req, res) => {
+  let { limit, since } = req.query
+
+  since = Number(since) || 0
+  limit = Number(limit) || 5
+
+  Product.find({}, 'name unitPrice description category user')
+    .sort('name')
+    .skip(since)
+    .limit(limit)
+    .populate('category', 'description')
+    .populate('user', 'name email')
+    .exec((err, products) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      Product.countDocuments({}, (err, size) => {
+        if (err) {
+          return res.status(500).json({
+            ok: false,
+            err
+          })
+        }
+
+        res.json({
+          ok: true,
+          products,
+          size
+        })
+      })
+    })
+})
+
+/* Create a user */
 app.post('/products', verifyToken, (req, res) => {
   let { name, unitPrice, description, category } = req.body
 
