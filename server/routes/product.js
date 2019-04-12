@@ -61,8 +61,8 @@ app.get('/products/:id', verifyToken, (req, res) => {
         })
       }
 
-      if (!productDB) {
-        return res.status(400).json({
+      if (!productDB || !productDB.available) {
+        return res.status(404).json({
           ok: false,
           err: {
             message: 'not exist the product'
@@ -122,7 +122,7 @@ app.put('/products/:id', (req, res) => {
       }
 
       if (!productDB) {
-        return res.status(400).json({
+        return res.status(404).json({
           ok: false,
           err: {
             message: 'not exist the product'
@@ -157,7 +157,7 @@ app.delete('/products/:id', verifyToken, (req, res) => {
       }
 
       if (!delProduct) {
-        return res.status(400).json({
+        return res.status(404).json({
           ok: false,
           err: {
             message: 'not exist the product'
