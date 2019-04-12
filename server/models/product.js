@@ -30,6 +30,16 @@ const productSchema = new Schema({
 
 })
 
+productSchema.methods.toJSON = function () {
+  let product = this
+  let productObject = product.toObject()
+
+  delete productObject.available
+  delete productObject.__v
+
+  return productObject
+}
+
 productSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' })
 
 module.exports = model('Product', productSchema)

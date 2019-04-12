@@ -12,7 +12,7 @@ app.get('/products', verifyToken, (req, res) => {
   since = Number(since) || 0
   limit = Number(limit) || 5
 
-  Product.find({}, 'name unitPrice description category user')
+  Product.find({})
     .sort('name')
     .skip(since)
     .limit(limit)
@@ -47,7 +47,7 @@ app.get('/products', verifyToken, (req, res) => {
 app.get('/products/:id', verifyToken, (req, res) => {
   let { id } = req.params
 
-  Product.findById(id, 'name unitPrice category')
+  Product.findById(id)
     .populate('category', 'description')
     .populate('user', 'name email')
     .exec((err, productDB) => {
