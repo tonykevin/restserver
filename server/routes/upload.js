@@ -17,7 +17,22 @@ app.put('/upload', (req, res) => {
 
   let { file } = req.files
 
-  file.mv('uploads/filename.jpg', (err) => {
+  const allowedExtensions = ['png', 'jpg', 'gif', 'jpeg']
+
+  let filename = file.name.split('.')
+  let ext = filename[filename.length - 1]
+
+  if (allowedExtensions.indexOf(ext) < 0) {
+    return res.status(400).json({
+      ok: false,
+      err: {
+        message: `allowed extensions are: ${allowedExtensions.join(', ')}`,
+        ext
+      }
+    })
+  }
+
+  file.mv(`uploads/${file.name}`, (err) => {
     if (err) {
       return res.status(500).json({
         ok: false,
