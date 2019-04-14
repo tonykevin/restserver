@@ -5,7 +5,9 @@ const app = express()
 
 app.use(fileUpload())
 
-app.put('/upload', (req, res) => {
+app.put('/upload/:type/:id', (req, res) => {
+  let { type, id } = req.params
+
   if (!req.files) {
     return res.status(400).json({
       ok: false,
@@ -15,10 +17,21 @@ app.put('/upload', (req, res) => {
     })
   }
 
+  // Validate type
+  let allowedTypes = ['products', 'users']
+
+  if (allowedTypes.indexOf(type) < 0) {
+    return res.status(400).json({
+      ok: false,
+      err: {
+        message: `allowed types are: ${allowedTypes.join(', ')}`
+      }
+    })
+  }
+
+  // Allowed extensions
   let { file } = req.files
-
   const allowedExtensions = ['png', 'jpg', 'gif', 'jpeg']
-
   let filename = file.name.split('.')
   let ext = filename[filename.length - 1]
 
@@ -32,7 +45,10 @@ app.put('/upload', (req, res) => {
     })
   }
 
-  file.mv(`uploads/${file.name}`, (err) => {
+  // Change filename
+  filename = `${id}.${new Date().getMilliseconds()}.${ext}`
+
+  file.mv(`uploads/${type}/${filename}`, (err) => {
     if (err) {
       return res.status(500).json({
         ok: false,
