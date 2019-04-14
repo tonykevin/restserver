@@ -105,7 +105,7 @@ app.post('/product', verifyToken, (req, res) => {
 })
 
 /* Update a product */
-app.put('/product/:id', (req, res) => {
+app.put('/product/:id', verifyToken, (req, res) => {
   let { id } = req.params
   let body = _.pick(
     req.body,
