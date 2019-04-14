@@ -107,13 +107,42 @@ app.post('/product', verifyToken, (req, res) => {
 /* Update a product */
 app.put('/product/:id', (req, res) => {
   let { id } = req.params
-  let body = _.pick(req.body, ['name', 'unitPrice', 'description', 'category'])
+  let body = _.pick(
+    req.body,
+    ['available', 'category', 'description', 'name', 'unitPrice']
+  )
 
-  Product.findByIdAndUpdate(
-    id,
-    body,
-    { context: 'query', new: true, runValidatos: true },
-    (err, productDB) => {
+  Product.findById(id, (err, productDB) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+
+    if (!productDB) {
+      return res.status(404).json({
+        ok: false,
+        err: {
+          message: 'not exist the product'
+        }
+      })
+    }
+
+    let modified = false
+
+    for (let key in body) {
+      if (body[key] && !(body[key] === String(productDB[key]))) {
+        productDB[key] = body[key]
+        modified = true
+      }
+    }
+
+    if (!modified) {
+      return res.status(304).end()
+    }
+
+    productDB.save((err, productDB) => {
       if (err) {
         return res.status(500).json({
           ok: false,
@@ -121,21 +150,12 @@ app.put('/product/:id', (req, res) => {
         })
       }
 
-      if (!productDB) {
-        return res.status(404).json({
-          ok: false,
-          err: {
-            message: 'not exist the product'
-          }
-        })
-      }
-
       res.json({
         ok: true,
         product: productDB
       })
-    }
-  )
+    })
+  })
 })
 
 /* Delete a product */
