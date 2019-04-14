@@ -162,13 +162,26 @@ app.put('/product/:id', verifyToken, (req, res) => {
 app.delete('/product/:id', verifyToken, (req, res) => {
   let { id } = req.params
 
-  let changeAvailable = { available: false }
+  Product.findById(id, (err, productDB) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
 
-  Product.findByIdAndUpdate(
-    id,
-    changeAvailable,
-    { new: true },
-    (err, delProduct) => {
+    if (!productDB || !productDB.available) {
+      return res.status(404).json({
+        ok: false,
+        err: {
+          message: 'not exist the product'
+        }
+      })
+    }
+
+    productDB.available = false
+
+    productDB.save((err, productDB) => {
       if (err) {
         return res.status(500).json({
           ok: false,
@@ -176,21 +189,13 @@ app.delete('/product/:id', verifyToken, (req, res) => {
         })
       }
 
-      if (!delProduct) {
-        return res.status(404).json({
-          ok: false,
-          err: {
-            message: 'not exist the product'
-          }
-        })
-      }
-
       res.json({
         ok: true,
-        product: delProduct
+        product: productDB,
+        message: 'deleted product'
       })
-    }
-  )
+    })
+  })
 })
 
 module.exports = app
