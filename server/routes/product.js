@@ -77,6 +77,38 @@ app.get('/product/:id', verifyToken, (req, res) => {
     })
 })
 
+/* Search a product */
+app.get('/product/search/:name', verifyToken, (req, res) => {
+  let { name } = req.params
+
+  const regex = new RegExp(name, 'i')
+
+  Product.find({ name: regex, available: true })
+    .populate('category', 'name')
+    .exec((err, products) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      if (!products.length) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: `there are no products with the letters: ${name}`
+          }
+        })
+      }
+
+      res.json({
+        ok: true,
+        products
+      })
+    })
+})
+
 /* Create a product */
 app.post('/product', verifyToken, (req, res) => {
   let { name, unitPrice, description, category } = req.body
