@@ -1,5 +1,7 @@
+const uniqid = require('uniqid');
 const express = require('express')
 const fileUpload = require('express-fileupload')
+const { User } = require('../models')
 
 const app = express()
 
@@ -46,7 +48,7 @@ app.put('/upload/:type/:id', (req, res) => {
   }
 
   // Change filename
-  filename = `${id}.${new Date().getMilliseconds()}.${ext}`
+  filename = `${filename[0]}.${uniqid()}.${ext}`
 
   file.mv(`uploads/${type}/${filename}`, (err) => {
     if (err) {
@@ -56,11 +58,44 @@ app.put('/upload/:type/:id', (req, res) => {
       })
     }
 
-    res.json({
-      ok: true,
-      message: 'file uploaded'
-    })
+    userImage(id, res, filename)
   })
 })
+
+function userImage (id, res, filename) {
+  User.findById(id, (err, userDB) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+
+    if (!userDB) {
+      return res.status(400).json({
+        ok: false,
+        err: {
+          message: 'use not exist'
+        }
+      })
+    }
+
+    userDB.img = filename
+
+    userDB.save((err, userDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      res.json({
+        ok: true,
+        user: userDB
+      })
+    })
+  })
+}
 
 module.exports = app
