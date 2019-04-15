@@ -1,6 +1,8 @@
-const uniqid = require('uniqid');
 const express = require('express')
 const fileUpload = require('express-fileupload')
+const { existsSync, unlinkSync } = require('fs')
+const { resolve } = require('path')
+const uniqid = require('uniqid')
 const { User } = require('../models')
 
 const app = express()
@@ -47,7 +49,6 @@ app.put('/upload/:type/:id', (req, res) => {
     })
   }
 
-  // Change filename
   filename = `${filename[0]}.${uniqid()}.${ext}`
 
   file.mv(`uploads/${type}/${filename}`, (err) => {
@@ -65,6 +66,7 @@ app.put('/upload/:type/:id', (req, res) => {
 function userImage (id, res, filename) {
   User.findById(id, (err, userDB) => {
     if (err) {
+      deleteFile(filename, 'users')
       return res.status(500).json({
         ok: false,
         err
@@ -72,6 +74,7 @@ function userImage (id, res, filename) {
     }
 
     if (!userDB) {
+      deleteFile(filename, 'users')
       return res.status(400).json({
         ok: false,
         err: {
@@ -79,6 +82,8 @@ function userImage (id, res, filename) {
         }
       })
     }
+
+    deleteFile(userDB.img, 'users')
 
     userDB.img = filename
 
@@ -96,6 +101,14 @@ function userImage (id, res, filename) {
       })
     })
   })
+}
+
+function deleteFile (imageName, type) {
+  let imagePath = resolve(__dirname, `../../uploads/${type}/${imageName}`)
+
+  if (existsSync(imagePath)) {
+    unlinkSync(imagePath)
+  }
 }
 
 module.exports = app
