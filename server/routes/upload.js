@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload')
 const { existsSync, unlinkSync } = require('fs')
 const { resolve } = require('path')
 const uniqid = require('uniqid')
-const { User } = require('../models')
+const { User, Product } = require('../models')
 
 const app = express()
 
@@ -59,7 +59,11 @@ app.put('/upload/:type/:id', (req, res) => {
       })
     }
 
-    userImage(id, res, filename)
+    if (type === 'users') {
+      userImage(id, res, filename)
+    } else {
+      productImage(id, res, filename)
+    }
   })
 })
 
@@ -78,7 +82,7 @@ function userImage (id, res, filename) {
       return res.status(400).json({
         ok: false,
         err: {
-          message: 'use not exist'
+          message: 'user not exist'
         }
       })
     }
@@ -98,6 +102,46 @@ function userImage (id, res, filename) {
       res.json({
         ok: true,
         user: userDB
+      })
+    })
+  })
+}
+
+function productImage (id, res, filename) {
+  Product.findById(id, (err, productDB) => {
+    if (err) {
+      deleteFile(filename, 'products')
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+
+    if (!productDB) {
+      deleteFile(filename, 'products')
+      return res.status(400).json({
+        ok: false,
+        err: {
+          message: 'product not exist'
+        }
+      })
+    }
+
+    deleteFile(productDB.img, 'products')
+
+    productDB.img = filename
+
+    productDB.save((err, productDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err
+        })
+      }
+
+      res.json({
+        ok: true,
+        product: productDB
       })
     })
   })
