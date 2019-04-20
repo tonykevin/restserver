@@ -1,5 +1,5 @@
 /*
- * Verify admin roke
+ * Verify admin role
  */
 
 let verifyAdminRole = (req, res, next) => {
